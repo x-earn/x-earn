@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Claim Page</title>
+</head>
+<body>
+    <div id="rewardSection">
+        <button id="claimButton" style="display: none;" onclick="claimReward()">Claim 10 Coins</button>
+    </div>
+
+    <script>
+        const rewardKey = 'lastClaimTime';
+        const rewardInterval = 40 * 60 * 1000; // 40 minutes in milliseconds
+        const reappearInterval = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+        function claimReward() {
+            const now = Date.now();
+            localStorage.setItem(rewardKey, now);
+            updateBalance(10);
+            document.getElementById('claimButton').style.display = 'none';
+            setTimeout(showClaimButton, reappearInterval);
+        }
+
+        function showClaimButton() {
+            const lastClaimTime = localStorage.getItem(rewardKey);
+            const now = Date.now();
+
+            if (!lastClaimTime || now - lastClaimTime >= rewardInterval) {
+                document.getElementById('claimButton').style.display = 'block';
+            } else {
+                document.getElementById('claimButton').style.display = 'none';
+                const timeLeft = rewardInterval - (now - lastClaimTime);
+                setTimeout(showClaimButton, timeLeft);
+            }
+        }
+
+        function updateBalance(coins) {
+            let balance = localStorage.getItem('balance') || 0;
+            balance = parseInt(balance) + coins;
+            localStorage.setItem('balance', balance);
+            console.log('Balance updated to:', balance);
+        }
+
+        showClaimButton();
+    </script>
+</body>
+</html>
